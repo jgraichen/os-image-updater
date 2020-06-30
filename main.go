@@ -10,7 +10,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
-	"strings"
+	"regexp"
 	"syscall"
 	"time"
 
@@ -135,7 +135,7 @@ func process(log *log.Entry, name string, image tImage) (err error) {
 			return nil
 		}
 
-		log.WithField("id", osImage.ID).Debug("Checksum match failed.")
+		log.WithField("id", osImage.ID).Debugf("Checksum match failed: \n  Expected: %s\n  Got: %s", md5, osImage.Checksum)
 	}
 
 	opts := images.CreateOpts{
@@ -248,23 +248,12 @@ func findMD5Checksum(conf tImage, name string) (string, error) {
 
 	filename := filepath.Base(conf.ImageURL)
 	scanner := bufio.NewScanner(resp.Body)
+	re := regexp.MustCompile(`^\s*(md5:?\s*)?(?P<c>[A-Fa-f0-9]+)\s+\*?(?P<f>.+)\s*$`)
 	for scanner.Scan() {
-		parts := strings.Fields(scanner.Text())
+		m := re.FindStringSubmatch(scanner.Text())
 
-		if len(parts) < 1 {
-			continue
-		}
-
-		if len(parts) == 2 {
-			// Format: "<checksum> <file>"
-			if parts[1] == filename {
-				return parts[0], nil
-			}
-		} else if len(parts) == 3 {
-			// Format: "<algo> <checksum> <file>"
-			if parts[2] == filename && strings.Trim(parts[0], ":") == "md5" {
-				return parts[1], nil
-			}
+		if m != nil && m[3] == filename {
+			return m[2], nil
 		}
 	}
 
