@@ -2,7 +2,7 @@
 
 A small program to keep cloud images in OpenStack up-to-date.
 
-It uses a YAML file for configuration and checksums to skip not necessary updates.
+It uses a YAML file for configuration and checksums to skip not necessary updates. Previous images are deleted.
 
 ## Usage
 
