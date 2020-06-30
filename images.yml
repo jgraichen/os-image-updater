@@ -1,21 +1,3 @@
-# os-image-updater
-
-A small program to keep cloud images in OpenStack up-to-date.
-
-It uses a YAML file for configuration and checksums to skip not necessary updates.
-
-## Usage
-
-```
-$ ./os-image-updater [--debug] [--dryrun]
-```
-
-Configure access using environment variables. `OS_CLOUD` is supported.
-
-## Example config
-
-```yml
-# images.yml
 default: &default
   hw_disk_bus: scsi
   hw_scsi_model: virtio-scsi
@@ -49,20 +31,13 @@ images:
       os_distro: ubuntu
       os_flavor: cloud
       os_version: 18.04
-```
 
-Only `images` is required.
-
-`checksums_url` must be a file in one of the following formats:
-
-* Checksum and filename:
-
-      123456789 cloudimage.qcow2
-      ...
-
-* Algorithm, checksum and filename:
-
-      md5: 123456789 cloudimgage.qcow2
-      ...
-
-Checksums must be MD5.
+  ubuntu-20.04:
+    image_url: https://cloud-images.ubuntu.com/releases/focal/release/ubuntu-20.04-server-cloudimg-amd64.img
+    checksums_url: https://cloud-images.ubuntu.com/releases/focal/release/MD5SUMS
+    properties:
+      <<: *default
+      os_codename: focal
+      os_distro: ubuntu
+      os_flavor: cloud
+      os_version: 20.04
