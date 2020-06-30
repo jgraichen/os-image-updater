@@ -131,7 +131,7 @@ func process(log *log.Entry, name string, image tImage) (err error) {
 
 	for _, osImage := range osImages {
 		if osImage.Checksum == md5 {
-			log.WithField("id", osImage.ID).Info("Checksum matches. Skip.")
+			log.WithField("id", osImage.ID).Info("Image up-to-date. Skip.")
 			return nil
 		}
 
