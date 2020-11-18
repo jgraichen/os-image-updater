@@ -37,6 +37,8 @@ type tImage struct {
 type tConfig struct {
 	Debug  bool              `yaml:"-"`
 	DryRun bool              `yaml:"-"`
+	Delete bool              `yaml:"-"`
+	Force  bool              `yaml:"-"`
 	Images map[string]tImage `yaml:"images,omitempty"`
 }
 
@@ -67,6 +69,8 @@ func main() {
 	config = &tConfig{}
 	flag.BoolVar(&config.Debug, "debug", false, "Enable debug logging")
 	flag.BoolVar(&config.DryRun, "dryrun", false, "Do not perform changing actions")
+	flag.BoolVar(&config.Delete, "delete", false, "Delete old images instead of only changing visibility to private")
+	flag.BoolVar(&config.Force, "force", false, "Force uploading new image even if checksum matches")
 	flag.Parse()
 
 	var err error
@@ -116,7 +120,7 @@ func process(log *log.Entry, name string, image tImage) (err error) {
 	}
 
 	log.Debug("Getting remote image details...")
-	osImages, err := findImages(name)
+	osImages, err := findPublicImages(name)
 	if err != nil {
 		return err
 	}
@@ -131,8 +135,13 @@ func process(log *log.Entry, name string, image tImage) (err error) {
 
 	for _, osImage := range osImages {
 		if osImage.Checksum == md5 {
-			log.WithField("id", osImage.ID).Info("Image up-to-date. Skip.")
-			return nil
+			if config.Force {
+				log.WithField("id", osImage.ID).Info("Image up-to-date but forced to update image.")
+				break
+			} else {
+				log.WithField("id", osImage.ID).Info("Image up-to-date. Skip.")
+				return nil
+			}
 		}
 
 		log.WithField("id", osImage.ID).Debugf("Checksum match failed: \n  Expected: %s\n  Got: %s", md5, osImage.Checksum)
@@ -209,12 +218,27 @@ func process(log *log.Entry, name string, image tImage) (err error) {
 	}
 
 	if len(osImages) > 0 {
-		log.Info("Delete old images...")
+		if config.Delete {
+			log.Info("Delete old images...")
 
-		for _, osImage := range osImages {
-			err = images.Delete(client, osImage.ID).ExtractErr()
-			if err != nil {
-				log.Error(err)
+			for _, osImage := range osImages {
+				err = images.Delete(client, osImage.ID).ExtractErr()
+				if err != nil {
+					log.Error(err)
+				}
+			}
+		} else {
+			log.Info("Update old images to private...")
+
+			for _, osImage := range osImages {
+				_, err = images.Update(client, osImage.ID, images.UpdateOpts{
+					images.UpdateVisibility{
+						Visibility: images.ImageVisibilityPrivate,
+					},
+				}).Extract()
+				if err != nil {
+					log.Error(err)
+				}
 			}
 		}
 	}
@@ -222,8 +246,11 @@ func process(log *log.Entry, name string, image tImage) (err error) {
 	return nil
 }
 
-func findImages(name string) ([]images.Image, error) {
-	pages, err := images.List(client, &images.ListOpts{Name: name}).AllPages()
+func findPublicImages(name string) ([]images.Image, error) {
+	pages, err := images.List(client, &images.ListOpts{
+		Name:       name,
+		Visibility: images.ImageVisibilityPublic,
+	}).AllPages()
 	if err != nil {
 		log.Fatal(err)
 	}
