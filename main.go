@@ -38,12 +38,11 @@ type tImage struct {
 
 type tConfig struct {
 	Debug  bool              `yaml:"-"`
+	Delete bool              `yaml:"delete" default:"false"`
 	DryRun bool              `yaml:"-"`
-	Delete bool              `yaml:"-"`
+	Filter string            `yaml:"-"`
 	Force  bool              `yaml:"-"`
 	Images map[string]tImage `yaml:"images,omitempty"`
-
-	Filter string
 }
 
 var client *gophercloud.ServiceClient
@@ -93,14 +92,14 @@ func main() {
 		log.SetLevel(log.DebugLevel)
 	}
 
-	filter := glob.MustCompile(config.Filter);
+	filter := glob.MustCompile(config.Filter)
 
 	for name, conf := range config.Images {
 		logger := log.WithField("image", name)
 
 		if len(config.Filter) > 0 && !filter.Match(name) {
 			logger.Debug("Image does not match filter. Skip.")
-			continue;
+			continue
 		}
 
 		defaults.Set(&conf)
