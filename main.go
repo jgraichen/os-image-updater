@@ -33,6 +33,7 @@ type tImage struct {
 	Properties        map[string]string `yaml:"properties,omitempty"`
 	DiskFormat        string            `yaml:"disk_format,omitempty" default:"qcow2"`
 	ContainerFormat   string            `yaml:"container_format,omitempty" default:"bare"`
+	Visibility        string            `yaml:"visibility,omitempty" default:"public"`
 }
 
 type tConfig struct {
@@ -211,16 +212,18 @@ func process(log *log.Entry, name string, image tImage) (err error) {
 		return err
 	}
 
-	log.Info("Publish new image...")
+	if image.Visibility == "public" {
+		log.Info("Publish new image...")
 
-	_, err = images.Update(client, newImage.ID, images.UpdateOpts{
-		images.UpdateVisibility{
-			Visibility: images.ImageVisibilityPublic,
-		},
-	}).Extract()
+		_, err = images.Update(client, newImage.ID, images.UpdateOpts{
+			images.UpdateVisibility{
+				Visibility: images.ImageVisibilityPublic,
+			},
+		}).Extract()
 
-	if err != nil {
-		return err
+		if err != nil {
+			return err
+		}
 	}
 
 	if len(osImages) > 0 {
