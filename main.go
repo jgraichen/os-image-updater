@@ -201,7 +201,7 @@ func process(log *log.Entry, name string, image tImage) (err error) {
 
 		if newImage.Status != images.ImageStatusActive {
 			log.WithField("id", newImage.ID).Debugf("Image status is %s", newImage.Status)
-			return fmt.Errorf("Got images status %s, expected active", newImage.Status)
+			return fmt.Errorf("got images status %s, expected active", newImage.Status)
 		}
 
 		return nil
@@ -300,7 +300,7 @@ func retry(f func() error) error {
 		time.Sleep(2 * time.Second)
 
 		if abort {
-			return errors.New("Action aborted")
+			return errors.New("action aborted")
 		}
 
 		if err = f(); err == nil {
