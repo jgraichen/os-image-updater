@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: wangyoucao577/go-release-action@744cde0d8f6885ab09766099a163740b241600b2
+      - uses: wangyoucao577/go-release-action@e0ae3b57477883690417c48738080f1f801a7ac0
         with:
           github_token: '${{ secrets.GITHUB_TOKEN }}'
           goos: linux
