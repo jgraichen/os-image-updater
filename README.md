@@ -65,4 +65,4 @@ Only `images` is required.
       md5: 123456789 cloudimgage.qcow2
       ...
 
-Checksums must be MD5.
+The checksum is stored as a custom image property and only used to check if a new image needs to be imported.
