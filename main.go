@@ -16,6 +16,7 @@ import (
 
 	"github.com/creasty/defaults"
 	"github.com/davecgh/go-spew/spew"
+	"github.com/gobwas/glob"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 
@@ -40,11 +41,8 @@ type tConfig struct {
 	Delete bool              `yaml:"-"`
 	Force  bool              `yaml:"-"`
 	Images map[string]tImage `yaml:"images,omitempty"`
-}
 
-type tChecksum struct {
-	Algorithm string
-	Value     string
+	Filter string
 }
 
 var client *gophercloud.ServiceClient
@@ -71,6 +69,7 @@ func main() {
 	flag.BoolVar(&config.DryRun, "dryrun", false, "Do not perform changing actions")
 	flag.BoolVar(&config.Delete, "delete", false, "Delete old images instead of only changing visibility to private")
 	flag.BoolVar(&config.Force, "force", false, "Force uploading new image even if checksum matches")
+	flag.StringVar(&config.Filter, "filter", "", "Only process images matching filter value")
 	flag.Parse()
 
 	var err error
@@ -93,8 +92,15 @@ func main() {
 		log.SetLevel(log.DebugLevel)
 	}
 
+	filter := glob.MustCompile(config.Filter);
+
 	for name, conf := range config.Images {
 		logger := log.WithField("image", name)
+
+		if len(config.Filter) > 0 && !filter.Match(name) {
+			logger.Debug("Image does not match filter. Skip.")
+			continue;
+		}
 
 		defaults.Set(&conf)
 		log.Debugf("Image configuration %s", spew.Sdump(conf))
