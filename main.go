@@ -17,6 +17,7 @@ import (
 	"github.com/creasty/defaults"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/gobwas/glob"
+	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 
@@ -132,7 +133,7 @@ func process(log *log.Entry, name string, image tImage) (err error) {
 	}
 
 	log.Debug("Getting remote checksum details...")
-	md5, err := findMD5Checksum(image, name)
+	checksum, err := findChecksum(image, name)
 	if err != nil {
 		return err
 	}
@@ -140,17 +141,27 @@ func process(log *log.Entry, name string, image tImage) (err error) {
 	log.Debugf("Found %d images matching name", len(osImages))
 
 	for _, osImage := range osImages {
-		if osImage.Checksum == md5 {
+		logger := log.WithField("id", osImage.ID)
+
+		value := osImage.Checksum
+		if val, exists := osImage.Properties["int:original-checksum"]; exists {
+			value = val.(string)
+		}
+
+		if value == checksum {
 			if config.Force {
-				log.WithField("id", osImage.ID).Info("Image up-to-date but forced to update image.")
+				logger.Info("Image up-to-date but forced to update image.")
 				break
 			} else {
-				log.WithField("id", osImage.ID).Info("Image up-to-date. Skip.")
+				logger.Info("Image up-to-date. Skip.")
 				return nil
 			}
 		}
 
-		log.WithField("id", osImage.ID).Debugf("Checksum match failed: \n  Expected: %s\n  Got: %s", md5, osImage.Checksum)
+		logger.WithFields(logrus.Fields{
+			"expected": checksum,
+			"got":      value,
+		}).Debugf("Checksum match failed")
 	}
 
 	opts := images.CreateOpts{
@@ -160,6 +171,8 @@ func process(log *log.Entry, name string, image tImage) (err error) {
 		Properties:      image.Properties,
 		Visibility:      visptr(images.ImageVisibilityPrivate),
 	}
+
+	opts.Properties["int:original-checksum"] = checksum
 
 	log.Debugf("Image create opts: %s", spew.Sdump(opts))
 
@@ -271,7 +284,7 @@ func findPublicImages(name string) ([]images.Image, error) {
 	return images, nil
 }
 
-func findMD5Checksum(conf tImage, name string) (string, error) {
+func findChecksum(conf tImage, name string) (string, error) {
 	var ck string
 
 	resp, err := http.Get(conf.ChecksumURL)
