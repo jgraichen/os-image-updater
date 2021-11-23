@@ -14,3 +14,6 @@ os-image-updater
 
 # Dependency directories (remove the comment below to include it)
 vendor/
+
+# release dist
+dist/
