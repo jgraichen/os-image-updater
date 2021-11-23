@@ -18,37 +18,33 @@ Configure access using environment variables. `OS_CLOUD` is supported.
 # images.yml
 default: &default
   hw_disk_bus: scsi
+  hw_qemu_guest_agent: yes
   hw_scsi_model: virtio-scsi
   img_hv_type: kvm
+  os_require_quiesce: yes
   os_type: linux
 
 images:
-  rancheros:
-    image_url: https://github.com/rancher/os/releases/latest/download/rancheros-openstack.img
-    checksums_url: https://github.com/rancher/os/releases/latest/download/checksums.txt
+  debian-11:
+    image_url: https://cloud.debian.org/images/cloud/bullseye/latest/debian-11-genericcloud-amd64.raw
+    checksums_url: https://cloud.debian.org/images/cloud/bullseye/latest/SHA512SUMS
+    disk_format: raw
     properties:
       <<: *default
-      os_codename: rancheros
-
-  debian-10:
-    image_url: https://cloud.debian.org/images/cloud/OpenStack/current-10/debian-10-openstack-amd64.qcow2
-    checksums_url: https://cloud.debian.org/images/cloud/OpenStack/current-10/MD5SUMS
-    properties:
-      <<: *default
-      os_codename: buster
+      os_codename: bullseye
       os_distro: debian
       os_flavor: cloud
-      os_version: 10
+      os_version: 11
 
-  ubuntu-18.04:
-    image_url: https://cloud-images.ubuntu.com/releases/bionic/release/ubuntu-18.04-server-cloudimg-amd64.img
-    checksums_url: https://cloud-images.ubuntu.com/releases/bionic/release/MD5SUMS
+  ubuntu-20.04:
+    image_url: https://cloud-images.ubuntu.com/releases/focal/release/ubuntu-20.04-server-cloudimg-amd64.img
+    checksums_url: https://cloud-images.ubuntu.com/releases/focal/release/MD5SUMS
     properties:
       <<: *default
-      os_codename: bionic
+      os_codename: focal
       os_distro: ubuntu
       os_flavor: cloud
-      os_version: 18.04
+      os_version: 20.04
 ```
 
 Only `images` is required.
