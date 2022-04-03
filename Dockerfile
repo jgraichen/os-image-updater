@@ -12,7 +12,7 @@ RUN go mod verify
 # Copy application files
 COPY . .
 
-RUN GOOS=linux GOARCH=amd64 go build -ldflags="-w -s"
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s"
 
 
 # Build release image
