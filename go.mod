@@ -3,7 +3,7 @@ module github.com/jgraichen/os-image-updater
 go 1.14
 
 require (
-	github.com/creasty/defaults v1.5.2
+	github.com/creasty/defaults v1.6.0
 	github.com/davecgh/go-spew v1.1.1
 	github.com/gobwas/glob v0.2.3
 	github.com/gophercloud/gophercloud v0.24.0
