@@ -6,7 +6,7 @@ require (
 	github.com/creasty/defaults v1.6.0
 	github.com/davecgh/go-spew v1.1.1
 	github.com/gobwas/glob v0.2.3
-	github.com/gophercloud/gophercloud v1.1.0
+	github.com/gophercloud/gophercloud v1.1.1
 	github.com/gophercloud/utils v0.0.0-20221128194715-5caf33c866da
 	github.com/sirupsen/logrus v1.9.0
 	gopkg.in/yaml.v2 v2.4.0
