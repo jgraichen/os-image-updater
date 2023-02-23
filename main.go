@@ -19,7 +19,7 @@ import (
 	"github.com/gobwas/glob"
 	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 
 	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/openstack/imageservice/v2/imageimport"
