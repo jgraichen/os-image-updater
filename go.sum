@@ -9,8 +9,8 @@ github.com/gobwas/glob v0.2.3/go.mod h1:d3Ez4x06l9bZtSvzIay5+Yzi0fmZzPgnTbPcKjJA
 github.com/gophercloud/gophercloud v1.3.0/go.mod h1:aAVqcocTSXh2vYFZ1JTvx4EQmfgzxRcNupUfxZbBNDM=
 github.com/gophercloud/gophercloud v1.4.0 h1:RqEu43vaX0lb0LanZr5BylK5ICVxjpFFoc0sxivyuHU=
 github.com/gophercloud/gophercloud v1.4.0/go.mod h1:aAVqcocTSXh2vYFZ1JTvx4EQmfgzxRcNupUfxZbBNDM=
-github.com/gophercloud/utils v0.0.0-20230418172808-6eab72e966e1 h1:vJyXd9+MB5vAKxpOo4z/PDSiPgKmEyJwHIDOdV4Y0KY=
-github.com/gophercloud/utils v0.0.0-20230418172808-6eab72e966e1/go.mod h1:VSalo4adEk+3sNkmVJLnhHoOyOYYS8sTWLG4mv5BKto=
+github.com/gophercloud/utils v0.0.0-20230523080330-de873b9cf00d h1:6Gvua77nKyAiZQpu0N3AsamGu1L6Mlnhp3tAtDcqwvc=
+github.com/gophercloud/utils v0.0.0-20230523080330-de873b9cf00d/go.mod h1:VSalo4adEk+3sNkmVJLnhHoOyOYYS8sTWLG4mv5BKto=
 github.com/hashicorp/go-uuid v1.0.3 h1:2gKiV6YVmrJ1i2CKKa9obLvRieoRGviZFL26PcT/Co8=
 github.com/hashicorp/go-uuid v1.0.3/go.mod h1:6SBZvOh/SIDV7/2o3Jml5SYk/TvGqwFJ/bN7x4byOro=
 github.com/kr/pretty v0.2.1 h1:Fmg33tUaq4/8ym9TJN1x7sLJnHVwhP33CNkpYV/7rwI=
