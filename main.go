@@ -40,12 +40,14 @@ type tImage struct {
 }
 
 type tConfig struct {
-	Debug  bool              `yaml:"-"`
-	Delete bool              `yaml:"delete" default:"false"`
-	DryRun bool              `yaml:"-"`
-	Filter string            `yaml:"-"`
-	Force  bool              `yaml:"-"`
-	Images map[string]tImage `yaml:"images,omitempty"`
+	Debug   bool              `yaml:"-"`
+	Delete  bool              `yaml:"delete" default:"false"`
+	DryRun  bool              `yaml:"-"`
+	Filter  string            `yaml:"-"`
+	Force   bool              `yaml:"-"`
+	Private bool              `yaml:"-"`
+	Prefix  string            `yaml:"prefix"`
+	Images  map[string]tImage `yaml:"images,omitempty"`
 }
 
 var client *gophercloud.ServiceClient
@@ -72,7 +74,9 @@ func main() {
 	flag.BoolVar(&config.DryRun, "dryrun", false, "Do not perform changing actions")
 	flag.BoolVar(&config.Delete, "delete", false, "Delete old images instead of only changing visibility to private")
 	flag.BoolVar(&config.Force, "force", false, "Force uploading new image even if checksum matches")
+	flag.BoolVar(&config.Private, "private", false, "Force image visibility to private")
 	flag.StringVar(&config.Filter, "filter", "", "Only process images matching filter value")
+	flag.StringVar(&config.Prefix, "prefix", "", "Prefix all image names")
 	flag.Parse()
 
 	var err error
@@ -98,7 +102,12 @@ func main() {
 	filter := glob.MustCompile(config.Filter)
 
 	for name, conf := range config.Images {
-		logger := log.WithField("image", name)
+		imageName := name
+		if config.Prefix != "" {
+			imageName = config.Prefix + name
+		}
+
+		logger := log.WithField("image", imageName)
 
 		if len(config.Filter) > 0 && !filter.Match(name) {
 			logger.Debug("Image does not match filter. Skip.")
@@ -108,7 +117,7 @@ func main() {
 		defaults.Set(&conf)
 		log.Debugf("Image configuration %s", spew.Sdump(conf))
 
-		err := process(logger, name, conf)
+		err := process(logger, imageName, conf)
 		if err != nil {
 			logger.Fatal(err)
 		}
@@ -226,7 +235,7 @@ func process(log *log.Entry, name string, image tImage) (err error) {
 		return err
 	}
 
-	if image.Visibility == "public" {
+	if !config.Private && image.Visibility == "public" {
 		log.Info("Publish new image...")
 
 		_, err = images.Update(client, newImage.ID, images.UpdateOpts{
