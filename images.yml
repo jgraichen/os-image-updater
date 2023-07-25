@@ -1,8 +1,11 @@
+# See: https://docs.openstack.org/glance/latest/admin/useful-image-properties.html
 default: &default
+  architecture: x86_64
+  hypervisor_type: qemu
+  vm_mode: hvm
   hw_disk_bus: scsi
   hw_qemu_guest_agent: yes
   hw_scsi_model: virtio-scsi
-  img_hv_type: kvm
   os_require_quiesce: yes
   os_type: linux
 
@@ -46,6 +49,7 @@ images:
     checksums_url: https://dl.rockylinux.org/pub/rocky/9/images/x86_64/CHECKSUM
     properties:
       <<: *default
-      os_distro: rockylinux
+      os_distro: rocky
       os_flavor: cloud
       os_version: 9
+      os_admin_user: rocky
