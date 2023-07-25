@@ -7,44 +7,45 @@ default: &default
   os_type: linux
 
 images:
-  debian-10:
-    image_url: https://cloud.debian.org/images/cloud/buster/latest/debian-10-genericcloud-amd64.raw
-    checksums_url: https://cloud.debian.org/images/cloud/buster/latest/SHA512SUMS
+  debian-12:
+    image_url: https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-genericcloud-amd64.raw
+    checksums_url: https://cloud.debian.org/images/cloud/bookworm/latest/SHA512SUMS
     disk_format: raw
     properties:
       <<: *default
-      os_codename: buster
+      os_codename: bookworm
       os_distro: debian
       os_flavor: cloud
-      os_version: 10
+      os_version: 12
+      os_admin_user: debian
 
-  debian-11:
-    image_url: https://cloud.debian.org/images/cloud/bullseye/latest/debian-11-genericcloud-amd64.raw
-    checksums_url: https://cloud.debian.org/images/cloud/bullseye/latest/SHA512SUMS
-    disk_format: raw
+  ubuntu-22.04:
+    image_url: https://cloud-images.ubuntu.com/releases/jammy/release/ubuntu-22.04-server-cloudimg-amd64.img
+    checksums_url: https://cloud-images.ubuntu.com/releases/jammy/release/SHA256SUMS
     properties:
       <<: *default
-      os_codename: bullseye
-      os_distro: debian
-      os_flavor: cloud
-      os_version: 11
-
-  ubuntu-18.04:
-    image_url: https://cloud-images.ubuntu.com/releases/bionic/release/ubuntu-18.04-server-cloudimg-amd64.img
-    checksums_url: https://cloud-images.ubuntu.com/releases/bionic/release/MD5SUMS
-    properties:
-      <<: *default
-      os_codename: bionic
+      os_codename: jammy
       os_distro: ubuntu
       os_flavor: cloud
-      os_version: 18.04
+      os_version: 22.04
+      os_admin_user: ubuntu
 
-  ubuntu-20.04:
-    image_url: https://cloud-images.ubuntu.com/releases/focal/release/ubuntu-20.04-server-cloudimg-amd64.img
-    checksums_url: https://cloud-images.ubuntu.com/releases/focal/release/MD5SUMS
+  ubuntu-22.04-minimal:
+    image_url: https://cloud-images.ubuntu.com/minimal/releases/jammy/release/ubuntu-22.04-minimal-cloudimg-amd64.img
+    checksums_url: https://cloud-images.ubuntu.com/minimal/releases/jammy/release/SHA256SUMS
     properties:
       <<: *default
-      os_codename: focal
+      os_codename: jammy
       os_distro: ubuntu
+      os_flavor: cloud-minimal
+      os_version: 22.04
+      os_admin_user: ubuntu
+
+  rockylinux-9:
+    image_url: https://dl.rockylinux.org/pub/rocky/9/images/x86_64/Rocky-9-GenericCloud-Base.latest.x86_64.qcow2
+    checksums_url: https://dl.rockylinux.org/pub/rocky/9/images/x86_64/CHECKSUM
+    properties:
+      <<: *default
+      os_distro: rockylinux
       os_flavor: cloud
-      os_version: 20.04
+      os_version: 9

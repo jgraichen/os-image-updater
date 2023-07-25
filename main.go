@@ -5,6 +5,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -17,6 +18,7 @@ import (
 	"github.com/creasty/defaults"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/gobwas/glob"
+	"github.com/oriser/regroup"
 	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
@@ -295,17 +297,50 @@ func findChecksum(conf tImage, name string) (string, error) {
 	defer resp.Body.Close()
 
 	filename := filepath.Base(conf.ImageURL)
-	scanner := bufio.NewScanner(resp.Body)
-	re := regexp.MustCompile(`^\s*(md5:?\s*)?(?P<c>[A-Fa-f0-9]+)\s+\*?(?P<f>.+)\s*$`)
-	for scanner.Scan() {
-		m := re.FindStringSubmatch(scanner.Text())
+	return scanChecksum(filename, resp.Body)
+}
 
-		if m != nil && m[3] == filename {
-			return m[2], nil
+type ChecksumMatch struct {
+	Checksum string `regroup:"checksum"`
+	Filename string `regroup:"filename"`
+}
+
+func scanChecksum(filename string, data io.Reader) (string, error) {
+	scanner := bufio.NewScanner(data)
+	patterns := make([]*regroup.ReGroup, 0, 3)
+
+	// "CHECKSUM filename"
+	patterns = append(patterns, regroup.MustCompile(`^\s*(?P<checksum>[A-Fa-f0-9]+)\s+\*?(?P<filename>.+)\s*$`))
+
+	// "algo: CHECKSUM filename"
+	patterns = append(patterns, regroup.MustCompile(`^\s*\w+:?\s*(?P<checksum>[A-Fa-f0-9]+)\s+\*?(?P<filename>.+)\s*$`))
+
+	// "ALGO(filename) = CHECKSUM"
+	patterns = append(patterns, regroup.MustCompile(`^\s*\w+\((?P<filename>.+)\)\s*=\s*(?P<checksum>[A-Fa-f0-9]+)\s*$`))
+
+	for scanner.Scan() {
+		text := scanner.Text()
+		for _, regroup := range patterns {
+			match := &ChecksumMatch{}
+			regroup.MatchToTarget(text, match)
+
+			if match.Filename == filename && match.Checksum != "" {
+				return match.Checksum, nil
+			}
 		}
 	}
 
 	return "", nil
+}
+
+func scanChecksumPattern(regex *regexp.Regexp, filename string, text string) string {
+	m := regex.FindStringSubmatch(text)
+
+	if m != nil && m[3] == filename {
+		return m[2]
+	}
+
+	return ""
 }
 
 func retry(f func() error) error {

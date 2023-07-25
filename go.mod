@@ -8,7 +8,9 @@ require (
 	github.com/gobwas/glob v0.2.3
 	github.com/gophercloud/gophercloud v1.5.0
 	github.com/gophercloud/utils v0.0.0-20230523080330-de873b9cf00d
+	github.com/oriser/regroup v0.0.0-20230527212431-1b00c9bdbc5b
 	github.com/sirupsen/logrus v1.9.3
+	github.com/stretchr/testify v1.7.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -16,6 +18,8 @@ require (
 	github.com/hashicorp/go-uuid v1.0.3 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
+	golang.org/x/exp v0.0.0-20230425010034-47ecfdc1ba53 // indirect
 	golang.org/x/sys v0.2.0 // indirect
 	golang.org/x/text v0.4.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
