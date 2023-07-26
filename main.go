@@ -21,6 +21,7 @@ import (
 	"github.com/oriser/regroup"
 	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
+	om "github.com/wk8/go-ordered-map/v2"
 	"gopkg.in/yaml.v3"
 
 	"github.com/gophercloud/gophercloud"
@@ -40,14 +41,14 @@ type tImage struct {
 }
 
 type tConfig struct {
-	Debug   bool              `yaml:"-"`
-	Delete  bool              `yaml:"delete" default:"false"`
-	DryRun  bool              `yaml:"-"`
-	Filter  string            `yaml:"-"`
-	Force   bool              `yaml:"-"`
-	Private bool              `yaml:"-"`
-	Prefix  string            `yaml:"prefix"`
-	Images  map[string]tImage `yaml:"images,omitempty"`
+	Debug   bool                          `yaml:"-"`
+	Delete  bool                          `yaml:"delete" default:"false"`
+	DryRun  bool                          `yaml:"-"`
+	Filter  string                        `yaml:"-"`
+	Force   bool                          `yaml:"-"`
+	Private bool                          `yaml:"-"`
+	Prefix  string                        `yaml:"prefix"`
+	Images  om.OrderedMap[string, tImage] `yaml:"images,omitempty"`
 }
 
 var client *gophercloud.ServiceClient
@@ -101,23 +102,23 @@ func main() {
 
 	filter := glob.MustCompile(config.Filter)
 
-	for name, conf := range config.Images {
-		imageName := name
+	for pair := config.Images.Oldest(); pair != nil; pair = pair.Next() {
+		imageName := pair.Key
 		if config.Prefix != "" {
-			imageName = config.Prefix + name
+			imageName = config.Prefix + pair.Key
 		}
 
 		logger := log.WithField("image", imageName)
 
-		if len(config.Filter) > 0 && !filter.Match(name) {
+		if len(config.Filter) > 0 && !filter.Match(pair.Key) {
 			logger.Debug("Image does not match filter. Skip.")
 			continue
 		}
 
-		defaults.Set(&conf)
-		log.Debugf("Image configuration %s", spew.Sdump(conf))
+		defaults.Set(&pair.Value)
+		log.Debugf("Image configuration %s", spew.Sdump(pair.Value))
 
-		err := process(logger, imageName, conf)
+		err := process(logger, imageName, pair.Value)
 		if err != nil {
 			logger.Fatal(err)
 		}
