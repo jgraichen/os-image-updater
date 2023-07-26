@@ -11,9 +11,10 @@ default: &default
 
 images:
   debian-12:
-    image_url: https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-genericcloud-amd64.raw
+    image_url: https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-genericcloud-amd64.qcow2
     checksums_url: https://cloud.debian.org/images/cloud/bookworm/latest/SHA512SUMS
-    disk_format: raw
+    min_disk: 5 # GB
+    min_ram: 128 # MB
     properties:
       <<: *default
       os_codename: bookworm
@@ -25,6 +26,8 @@ images:
   ubuntu-22.04:
     image_url: https://cloud-images.ubuntu.com/releases/jammy/release/ubuntu-22.04-server-cloudimg-amd64.img
     checksums_url: https://cloud-images.ubuntu.com/releases/jammy/release/SHA256SUMS
+    min_disk: 5 # GB
+    min_ram: 128 # MB
     properties:
       <<: *default
       os_codename: jammy
@@ -36,6 +39,8 @@ images:
   ubuntu-22.04-minimal:
     image_url: https://cloud-images.ubuntu.com/minimal/releases/jammy/release/ubuntu-22.04-minimal-cloudimg-amd64.img
     checksums_url: https://cloud-images.ubuntu.com/minimal/releases/jammy/release/SHA256SUMS
+    min_disk: 5 # GB
+    min_ram: 128 # MB
     properties:
       <<: *default
       os_codename: jammy
@@ -47,6 +52,8 @@ images:
   rockylinux-9:
     image_url: https://dl.rockylinux.org/pub/rocky/9/images/x86_64/Rocky-9-GenericCloud-Base.latest.x86_64.qcow2
     checksums_url: https://dl.rockylinux.org/pub/rocky/9/images/x86_64/CHECKSUM
+    min_disk: 5 # GB
+    min_ram: 128 # MB
     properties:
       <<: *default
       os_distro: rocky

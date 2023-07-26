@@ -38,6 +38,8 @@ type tImage struct {
 	DiskFormat        string            `yaml:"disk_format,omitempty" default:"qcow2"`
 	ContainerFormat   string            `yaml:"container_format,omitempty" default:"bare"`
 	Visibility        string            `yaml:"visibility,omitempty" default:"public"`
+	MinDisk           int               `yaml:"min_disk,omitempty" default:"0"`
+	MinRAM            int               `yaml:"min_ram,omitempty" default:"0"`
 }
 
 type tConfig struct {
@@ -181,6 +183,8 @@ func process(log *log.Entry, name string, image tImage) (err error) {
 		DiskFormat:      image.DiskFormat,
 		ContainerFormat: image.ContainerFormat,
 		Properties:      image.Properties,
+		MinDisk:         image.MinDisk,
+		MinRAM:          image.MinRAM,
 		Visibility:      visptr(images.ImageVisibilityPrivate),
 	}
 
