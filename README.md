@@ -6,8 +6,23 @@ It uses a YAML file for configuration and checksums to skip not necessary update
 
 ## Usage
 
-```
-$ ./os-image-updater [--debug] [--dryrun]
+```session
+> ./os-image-updater --help
+Usage of ./os-image-updater:
+  -debug
+      Enable debug logging
+  -delete
+      Delete old images instead of only changing visibility to private
+  -dryrun
+      Do not perform changing actions
+  -filter string
+      Only process images matching filter value
+  -force
+      Force uploading new image even if checksum matches
+  -prefix string
+      Prefix all image names
+  -private
+      Force image visibility to private
 ```
 
 Configure access using environment variables. `OS_CLOUD` is supported.
@@ -53,12 +68,23 @@ Only `images` is required.
 
 * Checksum and filename:
 
-      123456789 cloudimage.qcow2
-      ...
+  ```text
+  123456789 cloudimage.qcow2
+  ...
+  ```
 
 * Algorithm, checksum and filename:
 
-      md5: 123456789 cloudimgage.qcow2
-      ...
+  ```text
+  md5: 123456789 cloudimgage.qcow2
+  ...
+  ```
+
+* Or this format:
+
+  ```text
+  SHA256(cloudimgage.qcow2) = 123456789
+  ...
+  ```
 
 The checksum is stored as a custom image property and only used to check if a new image needs to be imported.
