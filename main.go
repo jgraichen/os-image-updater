@@ -255,24 +255,24 @@ func process(log *log.Entry, name string, image tImage) (err error) {
 	}
 
 	if len(osImages) > 0 {
+		log.Info("Update old images to private...")
+
+		for _, osImage := range osImages {
+			_, err = images.Update(client, osImage.ID, images.UpdateOpts{
+				images.UpdateVisibility{
+					Visibility: images.ImageVisibilityPrivate,
+				},
+			}).Extract()
+			if err != nil {
+				log.Error(err)
+			}
+		}
+
 		if config.Delete {
 			log.Info("Delete old images...")
 
 			for _, osImage := range osImages {
 				err = images.Delete(client, osImage.ID).ExtractErr()
-				if err != nil {
-					log.Error(err)
-				}
-			}
-		} else {
-			log.Info("Update old images to private...")
-
-			for _, osImage := range osImages {
-				_, err = images.Update(client, osImage.ID, images.UpdateOpts{
-					images.UpdateVisibility{
-						Visibility: images.ImageVisibilityPrivate,
-					},
-				}).Extract()
 				if err != nil {
 					log.Error(err)
 				}
