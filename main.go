@@ -360,7 +360,7 @@ func scanChecksumPattern(regex *regexp.Regexp, filename string, text string) str
 func retry(f func() error) error {
 	var err error
 
-	for i := 0; i < 150; i++ {
+	for i := 0; i < 300; i++ {
 		time.Sleep(2 * time.Second)
 
 		if abort {
