@@ -1,6 +1,6 @@
 module github.com/jgraichen/os-image-updater
 
-go 1.22
+go 1.23
 
 require (
 	github.com/creasty/defaults v1.7.0
