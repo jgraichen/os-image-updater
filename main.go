@@ -2,11 +2,11 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"errors"
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"os/signal"
@@ -19,15 +19,14 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/gobwas/glob"
 	"github.com/oriser/regroup"
-	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	om "github.com/wk8/go-ordered-map/v2"
 	"gopkg.in/yaml.v3"
 
-	"github.com/gophercloud/gophercloud"
-	"github.com/gophercloud/gophercloud/openstack/imageservice/v2/imageimport"
-	"github.com/gophercloud/gophercloud/openstack/imageservice/v2/images"
-	"github.com/gophercloud/utils/openstack/clientconfig"
+	"github.com/gophercloud/gophercloud/v2"
+	"github.com/gophercloud/gophercloud/v2/openstack/image/v2/imageimport"
+	"github.com/gophercloud/gophercloud/v2/openstack/image/v2/images"
+	"github.com/gophercloud/utils/v2/openstack/clientconfig"
 )
 
 type tImage struct {
@@ -64,6 +63,7 @@ func init() {
 }
 
 func main() {
+	ctx := context.Background()
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 
@@ -83,7 +83,7 @@ func main() {
 	flag.Parse()
 
 	var err error
-	client, err = clientconfig.NewServiceClient("image", &clientconfig.ClientOpts{})
+	client, err = clientconfig.NewServiceClient(ctx, "image", &clientconfig.ClientOpts{})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -120,7 +120,7 @@ func main() {
 		defaults.Set(&pair.Value)
 		log.Debugf("Image configuration %s", spew.Sdump(pair.Value))
 
-		err := process(logger, imageName, pair.Value)
+		err := process(ctx, logger, imageName, pair.Value)
 		if err != nil {
 			logger.Fatal(err)
 		}
@@ -131,8 +131,8 @@ func main() {
 	}
 }
 
-func process(log *log.Entry, name string, image tImage) (err error) {
-	log.Info("Fetch image details...")
+func process(ctx context.Context, logEntry *log.Entry, name string, image tImage) (err error) {
+	logEntry.Info("Fetch image details...")
 
 	onError := func(f func()) {
 		if err != nil {
@@ -140,22 +140,22 @@ func process(log *log.Entry, name string, image tImage) (err error) {
 		}
 	}
 
-	log.Debug("Getting remote image details...")
-	osImages, err := findPublicImages(name)
+	logEntry.Debug("Getting remote image details...")
+	osImages, err := findPublicImages(ctx, name)
 	if err != nil {
 		return err
 	}
 
-	log.Debug("Getting remote checksum details...")
+	logEntry.Debug("Getting remote checksum details...")
 	checksum, err := findChecksum(image, name)
 	if err != nil {
 		return err
 	}
 
-	log.Debugf("Found %d images matching name", len(osImages))
+	logEntry.Debugf("Found %d images matching name", len(osImages))
 
 	for _, osImage := range osImages {
-		logger := log.WithField("id", osImage.ID)
+		logger := logEntry.WithField("id", osImage.ID)
 
 		value := osImage.Checksum
 		if val, exists := osImage.Properties["int:original-checksum"]; exists {
@@ -172,7 +172,7 @@ func process(log *log.Entry, name string, image tImage) (err error) {
 			}
 		}
 
-		logger.WithFields(logrus.Fields{
+		logger.WithFields(log.Fields{
 			"expected": checksum,
 			"got":      value,
 		}).Debugf("Checksum match failed")
@@ -190,27 +190,27 @@ func process(log *log.Entry, name string, image tImage) (err error) {
 
 	opts.Properties["int:original-checksum"] = checksum
 
-	log.Debugf("Image create opts: %s", spew.Sdump(opts))
+	logEntry.Debugf("Image create opts: %s", spew.Sdump(opts))
 
 	if config.DryRun {
-		log.Info("Would create and import new image. Skip.")
+		logEntry.Info("Would create and import new image. Skip.")
 		return nil
 	}
 
-	newImage, err := images.Create(client, &opts).Extract()
+	newImage, err := images.Create(ctx, client, &opts).Extract()
 	if err != nil {
 		return err
 	}
 
 	defer onError(func() {
-		log.WithField("id", newImage.ID).Debugf("Rollback image resource...")
-		err := images.Delete(client, newImage.ID).ExtractErr()
+		logEntry.WithField("id", newImage.ID).Debugf("Rollback image resource...")
+		err := images.Delete(ctx, client, newImage.ID).ExtractErr()
 		if err != nil {
-			log.Error(err)
+			logEntry.Error(err)
 		}
 	})
 
-	err = imageimport.Create(client, newImage.ID, &imageimport.CreateOpts{
+	err = imageimport.Create(ctx, client, newImage.ID, &imageimport.CreateOpts{
 		Name: imageimport.WebDownloadMethod,
 		URI:  image.ImageURL,
 	}).ExtractErr()
@@ -219,17 +219,17 @@ func process(log *log.Entry, name string, image tImage) (err error) {
 		return err
 	}
 
-	log.Info("Waiting for import to complete...")
+	logEntry.Info("Waiting for import to complete...")
 
 	err = retry(func() error {
-		newImage, err = images.Get(client, newImage.ID).Extract()
+		newImage, err = images.Get(ctx, client, newImage.ID).Extract()
 		if err != nil {
-			log.Debug(err)
+			logEntry.Debug(err)
 			return err
 		}
 
 		if newImage.Status != images.ImageStatusActive {
-			log.WithField("id", newImage.ID).Debugf("Image status is %s", newImage.Status)
+			logEntry.WithField("id", newImage.ID).Debugf("Image status is %s", newImage.Status)
 			return fmt.Errorf("got images status %s, expected active", newImage.Status)
 		}
 
@@ -241,9 +241,9 @@ func process(log *log.Entry, name string, image tImage) (err error) {
 	}
 
 	if !config.Private && image.Visibility == "public" {
-		log.Info("Publish new image...")
+		logEntry.Info("Publish new image...")
 
-		_, err = images.Update(client, newImage.ID, images.UpdateOpts{
+		_, err = images.Update(ctx, client, newImage.ID, images.UpdateOpts{
 			images.UpdateVisibility{
 				Visibility: images.ImageVisibilityPublic,
 			},
@@ -255,26 +255,26 @@ func process(log *log.Entry, name string, image tImage) (err error) {
 	}
 
 	if len(osImages) > 0 {
-		log.Info("Update old images to private...")
+		logEntry.Info("Update old images to private...")
 
 		for _, osImage := range osImages {
-			_, err = images.Update(client, osImage.ID, images.UpdateOpts{
+			_, err = images.Update(ctx, client, osImage.ID, images.UpdateOpts{
 				images.UpdateVisibility{
 					Visibility: images.ImageVisibilityPrivate,
 				},
 			}).Extract()
 			if err != nil {
-				log.Error(err)
+				logEntry.Error(err)
 			}
 		}
 
 		if config.Delete {
-			log.Info("Delete old images...")
+			logEntry.Info("Delete old images...")
 
 			for _, osImage := range osImages {
-				err = images.Delete(client, osImage.ID).ExtractErr()
+				err = images.Delete(ctx, client, osImage.ID).ExtractErr()
 				if err != nil {
-					log.Error(err)
+					logEntry.Error(err)
 				}
 			}
 		}
@@ -283,11 +283,11 @@ func process(log *log.Entry, name string, image tImage) (err error) {
 	return nil
 }
 
-func findPublicImages(name string) ([]images.Image, error) {
+func findPublicImages(ctx context.Context, name string) ([]images.Image, error) {
 	pages, err := images.List(client, &images.ListOpts{
 		Name:       name,
 		Visibility: images.ImageVisibilityPublic,
-	}).AllPages()
+	}).AllPages(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
