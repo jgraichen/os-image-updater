@@ -88,7 +88,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	content, err := ioutil.ReadFile("images.yml")
+	content, err := os.ReadFile("images.yml")
 	if err != nil {
 		log.Fatal(err)
 	}
