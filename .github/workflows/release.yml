@@ -29,6 +29,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - uses: goreleaser/goreleaser-action@v6
         with:
-          args: release --rm-dist
+          args: release
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
