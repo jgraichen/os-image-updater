@@ -1,6 +1,8 @@
 # This is an example goreleaser.yaml file with some sane defaults.
 # Make sure to check the documentation at http://goreleaser.com
 
+version: 2
+
 builds:
   - env:
       - CGO_ENABLED=0
@@ -9,6 +11,59 @@ builds:
     goarch:
       - amd64
       - arm64
+
+dockers:
+  - image_templates:
+      - ghcr.io/jgraichen/os-image-updater:latest-amd64
+      - ghcr.io/jgraichen/os-image-updater:v{{ .Major }}-amd64
+      - ghcr.io/jgraichen/os-image-updater:v{{ .Major }}.{{ .Minor }}-amd64
+      - ghcr.io/jgraichen/os-image-updater:{{ .Tag }}-amd64
+    use: buildx
+    build_flag_templates:
+      - --pull
+      - --platform=linux/amd64
+      - --label=org.opencontainers.image.created={{.Date}}
+      - --label=org.opencontainers.image.title={{.ProjectName}}
+      - --label=org.opencontainers.image.revision={{.FullCommit}}
+      - --label=org.opencontainers.image.version={{.Version}}
+      - --label=org.opencontainers.image.licenses=MIT
+      - --label=org.opencontainers.image.url=https://github.com/jgraichen/os-image-updater
+      - --label=org.opencontainers.image.source=https://github.com/jgraichen/os-image-updater
+  - image_templates:
+      - ghcr.io/jgraichen/os-image-updater:latest-arm64
+      - ghcr.io/jgraichen/os-image-updater:v{{ .Major }}-arm64
+      - ghcr.io/jgraichen/os-image-updater:v{{ .Major }}.{{ .Minor }}-arm64
+      - ghcr.io/jgraichen/os-image-updater:{{ .Tag }}-arm64
+    use: buildx
+    build_flag_templates:
+      - --pull
+      - --platform=linux/arm64
+      - --label=org.opencontainers.image.created={{.Date}}
+      - --label=org.opencontainers.image.title={{.ProjectName}}
+      - --label=org.opencontainers.image.revision={{.FullCommit}}
+      - --label=org.opencontainers.image.version={{.Version}}
+      - --label=org.opencontainers.image.licenses=MIT
+      - --label=org.opencontainers.image.url=https://github.com/jgraichen/os-image-updater
+      - --label=org.opencontainers.image.source=https://github.com/jgraichen/os-image-updater
+    goarch: arm64
+
+docker_manifests:
+  - name_template: ghcr.io/jgraichen/os-image-updater:latest
+    image_templates:
+      - ghcr.io/jgraichen/os-image-updater:latest-amd64
+      - ghcr.io/jgraichen/os-image-updater:latest-arm64
+  - name_template: ghcr.io/jgraichen/os-image-updater:v{{ .Major }}
+    image_templates:
+      - ghcr.io/jgraichen/os-image-updater:v{{ .Major }}-amd64
+      - ghcr.io/jgraichen/os-image-updater:v{{ .Major }}-arm64
+  - name_template: ghcr.io/jgraichen/os-image-updater:v{{ .Major }}.{{ .Minor }}
+    image_templates:
+      - ghcr.io/jgraichen/os-image-updater:v{{ .Major }}.{{ .Minor }}-amd64
+      - ghcr.io/jgraichen/os-image-updater:v{{ .Major }}.{{ .Minor }}-arm64
+  - name_template: ghcr.io/jgraichen/os-image-updater:{{ .Tag }}
+    image_templates:
+      - ghcr.io/jgraichen/os-image-updater:{{ .Tag }}-amd64
+      - ghcr.io/jgraichen/os-image-updater:{{ .Tag }}-arm64
 
 checksum:
   algorithm: sha384
