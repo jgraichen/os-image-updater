@@ -7,7 +7,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1
 	github.com/gobwas/glob v0.2.3
 	github.com/gophercloud/gophercloud/v2 v2.2.0
-	github.com/gophercloud/utils/v2 v2.0.0-20241008104625-7cbb8fd76bb7
+	github.com/gophercloud/utils/v2 v2.0.0-20241021065553-b46d0737ee98
 	github.com/oriser/regroup v0.0.0-20240925165441-f6bb0e08289e
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.9.0
