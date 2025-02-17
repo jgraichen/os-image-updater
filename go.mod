@@ -6,8 +6,8 @@ require (
 	github.com/creasty/defaults v1.8.0
 	github.com/davecgh/go-spew v1.1.1
 	github.com/gobwas/glob v0.2.3
-	github.com/gophercloud/gophercloud/v2 v2.4.0
-	github.com/gophercloud/utils/v2 v2.0.0-20250205065254-a1bff20237e7
+	github.com/gophercloud/gophercloud/v2 v2.5.0
+	github.com/gophercloud/utils/v2 v2.0.0-20250212084022-725b94822eeb
 	github.com/oriser/regroup v0.0.0-20240925165441-f6bb0e08289e
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.10.0
