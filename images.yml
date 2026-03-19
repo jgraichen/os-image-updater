@@ -10,53 +10,63 @@ default: &default
   os_type: linux
 
 images:
-  debian-12:
-    image_url: https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-genericcloud-amd64.qcow2
+  debian-13:
+    image_url: https://cloud.debian.org/images/cloud/bookworm/latest/debian-13-genericcloud-amd64.qcow2
     checksums_url: https://cloud.debian.org/images/cloud/bookworm/latest/SHA512SUMS
     min_disk: 5 # GB
     min_ram: 128 # MB
     properties:
       <<: *default
-      os_codename: bookworm
+      os_codename: trixie
       os_distro: debian
       os_flavor: cloud
-      os_version: 12
+      os_version: 13
       os_admin_user: debian
 
-  ubuntu-22.04:
-    image_url: https://cloud-images.ubuntu.com/releases/jammy/release/ubuntu-22.04-server-cloudimg-amd64.img
-    checksums_url: https://cloud-images.ubuntu.com/releases/jammy/release/SHA256SUMS
+  ubuntu-24.04:
+    image_url: https://cloud-images.ubuntu.com/releases/noble/release/ubuntu-24.04-server-cloudimg-amd64.img
+    checksums_url: https://cloud-images.ubuntu.com/releases/noble/release/SHA256SUMS
     min_disk: 5 # GB
     min_ram: 128 # MB
     properties:
       <<: *default
-      os_codename: jammy
+      os_codename: noble
       os_distro: ubuntu
       os_flavor: cloud
-      os_version: 22.04
+      os_version: 24.04
       os_admin_user: ubuntu
 
-  ubuntu-22.04-minimal:
-    image_url: https://cloud-images.ubuntu.com/minimal/releases/jammy/release/ubuntu-22.04-minimal-cloudimg-amd64.img
-    checksums_url: https://cloud-images.ubuntu.com/minimal/releases/jammy/release/SHA256SUMS
+  ubuntu-24.04-minimal:
+    image_url: https://cloud-images.ubuntu.com/minimal/releases/noble/release/ubuntu-24.04-minimal-cloudimg-amd64.img
+    checksums_url: https://cloud-images.ubuntu.com/minimal/releases/noble/release/SHA256SUMS
     min_disk: 5 # GB
     min_ram: 128 # MB
     properties:
       <<: *default
-      os_codename: jammy
+      os_codename: noble
       os_distro: ubuntu
       os_flavor: cloud-minimal
-      os_version: 22.04
+      os_version: 24.04
       os_admin_user: ubuntu
 
-  rockylinux-9:
-    image_url: https://dl.rockylinux.org/pub/rocky/9/images/x86_64/Rocky-9-GenericCloud-Base.latest.x86_64.qcow2
-    checksums_url: https://dl.rockylinux.org/pub/rocky/9/images/x86_64/CHECKSUM
-    min_disk: 5 # GB
+  rocky-10:
+    image_url: https://dl.rockylinux.org/pub/rocky/10/images/x86_64/Rocky-10-GenericCloud-Base.latest.x86_64.qcow2
+    checksums_url: https://dl.rockylinux.org/pub/rocky/10/images/x86_64/CHECKSUM
+    min_disk: 10 # GB
     min_ram: 128 # MB
     properties:
       <<: *default
       os_distro: rocky
       os_flavor: cloud
-      os_version: 9
+      os_version: 10
       os_admin_user: rocky
+
+  flatcar:
+    image_url: https://stable.release.flatcar-linux.net/amd64-usr/current/flatcar_production_openstack_image.img
+    checksums_url: https://stable.release.flatcar-linux.net/amd64-usr/current/flatcar_production_openstack_image.img.DIGESTS
+    min_disk: 10 # GB
+    min_ram: 128 # MB
+    properties:
+      <<: *default
+      os_distro: flatcar
+      os_admin_user: core
