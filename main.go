@@ -241,7 +241,7 @@ func process(ctx context.Context, logEntry *log.Entry, name string, image tImage
 	}
 
 	if !config.Private && image.Visibility == "public" {
-		logEntry.Info("Publish new image...")
+		logEntry.WithField("id", newImage.ID).Info("Publish new image...")
 
 		_, err = images.Update(ctx, client, newImage.ID, images.UpdateOpts{
 			images.UpdateVisibility{
