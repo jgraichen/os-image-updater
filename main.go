@@ -103,6 +103,7 @@ func main() {
 	}
 
 	filter := glob.MustCompile(config.Filter)
+	code := 0
 
 	for pair := config.Images.Oldest(); pair != nil; pair = pair.Next() {
 		imageName := pair.Key
@@ -122,13 +123,16 @@ func main() {
 
 		err := process(ctx, logger, imageName, pair.Value)
 		if err != nil {
-			logger.Fatal(err)
+			code = 1
+			logger.Error(err)
 		}
 
 		if abort {
 			break
 		}
 	}
+
+	os.Exit(code)
 }
 
 func process(ctx context.Context, logEntry *log.Entry, name string, image tImage) (err error) {
