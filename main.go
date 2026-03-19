@@ -222,15 +222,15 @@ func process(ctx context.Context, logEntry *log.Entry, name string, image tImage
 	logEntry.Info("Waiting for import to complete...")
 
 	err = retry(func() error {
-		newImage, err = images.Get(ctx, client, newImage.ID).Extract()
+		image, err := images.Get(ctx, client, newImage.ID).Extract()
 		if err != nil {
 			logEntry.Debug(err)
 			return err
 		}
 
-		if newImage.Status != images.ImageStatusActive {
-			logEntry.WithField("id", newImage.ID).Debugf("Image status is %s", newImage.Status)
-			return fmt.Errorf("got images status %s, expected active", newImage.Status)
+		if image.Status != images.ImageStatusActive {
+			logEntry.WithField("id", image.ID).Debugf("Image status is %s", image.Status)
+			return fmt.Errorf("got images status %s, expected active", image.Status)
 		}
 
 		return nil
