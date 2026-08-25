@@ -9,8 +9,8 @@ require (
 	github.com/gophercloud/gophercloud/v2 v2.13.0
 	github.com/gophercloud/utils/v2 v2.0.0-20260820140002-321c0f238d1a
 	github.com/oriser/regroup v0.0.0-20240925165441-f6bb0e08289e
-	github.com/sirupsen/logrus v1.10.0
-	github.com/stretchr/testify v1.11.1
+	github.com/sirupsen/logrus v1.10.1
+	github.com/stretchr/testify v1.12.0
 	github.com/wk8/go-ordered-map/v2 v2.1.8
 	gopkg.in/yaml.v3 v3.0.1
 )
@@ -21,7 +21,6 @@ require (
 	github.com/gofrs/uuid/v5 v5.5.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
-	github.com/pmezard/go-difflib v1.0.0 // indirect
 	golang.org/x/exp v0.0.0-20230425010034-47ecfdc1ba53 // indirect
 	golang.org/x/sys v0.45.0 // indirect
 	golang.org/x/text v0.28.0 // indirect
