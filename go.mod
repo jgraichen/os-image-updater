@@ -6,8 +6,8 @@ require (
 	github.com/creasty/defaults v1.8.0
 	github.com/davecgh/go-spew v1.1.1
 	github.com/gobwas/glob v0.2.3
-	github.com/gophercloud/gophercloud/v2 v2.13.0
-	github.com/gophercloud/utils/v2 v2.0.0-20260820140002-321c0f238d1a
+	github.com/gophercloud/gophercloud/v2 v2.14.0
+	github.com/gophercloud/utils/v2 v2.0.0-20260824073324-42b9474d09d4
 	github.com/oriser/regroup v0.0.0-20240925165441-f6bb0e08289e
 	github.com/sirupsen/logrus v1.10.1
 	github.com/stretchr/testify v1.12.0
@@ -22,7 +22,7 @@ require (
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	golang.org/x/exp v0.0.0-20230425010034-47ecfdc1ba53 // indirect
-	golang.org/x/sys v0.45.0 // indirect
+	golang.org/x/sys v0.47.0 // indirect
 	golang.org/x/text v0.28.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
