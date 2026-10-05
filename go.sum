@@ -7,8 +7,8 @@ github.com/creasty/defaults v1.11.0 h1:lZ8c5bHZGtyIeumdTPXKOKkHtNL+qQWVrGhNPGqeF
 github.com/creasty/defaults v1.11.0/go.mod h1:TGHvg4OCP/fVv+yotLzg97i5PKrF+iZSvg6Kmm7Y12Y=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/gobwas/glob v0.2.3 h1:A4xDbljILXROh+kObIiy5kIaPYD8e96x1tgBhUI5J+Y=
-github.com/gobwas/glob v0.2.3/go.mod h1:d3Ez4x06l9bZtSvzIay5+Yzi0fmZzPgnTbPcKjJAkT8=
+github.com/gobwas/glob v1.0.0 h1:p+FKbLEIsK1yZ39/OINwFvqNb5oyPY4H8xcy6uYu8dg=
+github.com/gobwas/glob v1.0.0/go.mod h1:oWCdo522i2P1n/hMXGNWs7yoV4wy/ciZuUIbvKj5rkc=
 github.com/gofrs/uuid/v5 v5.5.1 h1:z1Ce19/JwNidXpy3tOQc3241lnJLKdKyq/xlNvlD4Ng=
 github.com/gofrs/uuid/v5 v5.5.1/go.mod h1:bbAA98EoIlxyRHIVg6ektCSsZ5n8mSbwgEhvhMYlZgg=
 github.com/gophercloud/gophercloud/v2 v2.15.0 h1:4zLiLYTFraZMlJ77FH1Kzq7itjfVP+BIbWcCurCrgic=
